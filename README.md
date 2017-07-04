@@ -33,6 +33,11 @@ of all  the various versions of PrimMesher out there.
 If you hear of or know of bugs or needed improvements,
 please add an issue.
 
+## TODO (as of 20170704):
+
+- Incorporate the additional LOD sculpty levels from OpenSimulator:ubODEMeshing/ScupltMesh.cs;
+- Decide of code reorganizationin OpenSimulator:ubODEMeshing/SculptMesh.cs is significant or cosmetic;
+
 [SecondLife(r)]: https://secondlife.com/
 [OpenSimulator]: http://opensimulator.org/
 [primitive]: http://wiki.secondlife.com/wiki/Primitive
