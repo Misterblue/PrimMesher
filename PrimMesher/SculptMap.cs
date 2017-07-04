@@ -25,14 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// to build without references to System.Drawing, comment this out
-#define SYSTEM_DRAWING
-
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-#if SYSTEM_DRAWING
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -60,11 +56,12 @@ namespace PrimMesher
 
             int numLodPixels = lod * lod;  // (32 * 2)^2  = 64^2 pixels for default sculpt map image
 
-            bool smallMap = bmW * bmH <= numLodPixels;
             bool needsScaling = false;
+            bool smallMap = false;
 
             width = bmW;
             height = bmH;
+
             while (width * height > numLodPixels * 4)
             {
                 width >>= 1;
@@ -72,22 +69,17 @@ namespace PrimMesher
                 needsScaling = true;
             }
 
-            try
-            {
-                if (needsScaling)
-                    bm = ScaleImage(bm, width, height);
-            }
-
-            catch (Exception e)
-            {
-                throw new Exception("Exception in ScaleImage(): e: " + e.ToString());
-            }
+            if (needsScaling)
+                bm = ScaleImage(bm, width, height);
 
             if (width * height > numLodPixels)
             {
+                smallMap = false;
                 width >>= 1;
                 height >>= 1;
             }
+            else
+                smallMap = true;
 
             int numBytes = (width + 1) * (height + 1);
             redBytes = new byte[numBytes];
@@ -95,21 +87,18 @@ namespace PrimMesher
             blueBytes = new byte[numBytes];
 
             int byteNdx = 0;
+            Color c;
 
             try
             {
                 for (int y = 0; y <= height; y++)
                 {
-                    for (int x = 0; x <= width; x++)
+                    for (int x = 0; x < width; x++)
                     {
-                        Color c;
-
                         if (smallMap)
-                            c = bm.GetPixel(x < width ? x : x - 1,
-                                            y < height ? y : y - 1);
+                            c = bm.GetPixel(x,  y < height ? y : y - 1);
                         else
-                            c = bm.GetPixel(x < width ? x * 2 : x * 2 - 1,
-                                            y < height ? y * 2 : y * 2 - 1);
+                            c = bm.GetPixel(x * 2, y < height ? y * 2 : y * 2 - 1);
 
                         redBytes[byteNdx] = c.R;
                         greenBytes[byteNdx] = c.G;
@@ -117,15 +106,30 @@ namespace PrimMesher
 
                         ++byteNdx;
                     }
+
+                    if (smallMap)
+                        c = bm.GetPixel(width - 1, y < height ? y : y - 1);
+                    else
+                        c = bm.GetPixel(width * 2 - 1, y < height ? y * 2 : y * 2 - 1);
+
+                    redBytes[byteNdx] = c.R;
+                    greenBytes[byteNdx] = c.G;
+                    blueBytes[byteNdx] = c.B;
+
+                    ++byteNdx;
                 }
             }
             catch (Exception e)
             {
+                if (needsScaling)
+                    bm.Dispose();
                 throw new Exception("Caught exception processing byte arrays in SculptMap(): e: " + e.ToString());
             }
 
             width++;
             height++;
+            if(needsScaling)
+                bm.Dispose();
         }
 
         public List<List<Coord>> ToRows(bool mirror)
@@ -139,7 +143,6 @@ namespace PrimMesher
 
             int rowNdx, colNdx;
             int smNdx = 0;
-
 
             for (rowNdx = 0; rowNdx < numRows; rowNdx++)
             {
@@ -161,18 +164,27 @@ namespace PrimMesher
 
         private Bitmap ScaleImage(Bitmap srcImage, int destWidth, int destHeight)
         {
-
             Bitmap scaledImage = new Bitmap(destWidth, destHeight, PixelFormat.Format24bppRgb);
 
             Color c;
-            float xscale = srcImage.Width / destWidth;
-            float yscale = srcImage.Height / destHeight;
+
+            // will let last step to be eventually diferent, as seems to be in sl
+
+            float xscale = (float)srcImage.Width / (float)destWidth;
+            float yscale = (float)srcImage.Height / (float)destHeight;
+
+            int lastsx = srcImage.Width - 1;
+            int lastsy = srcImage.Height - 1;
+            int lastdx = destWidth - 1;
+            int lastdy = destHeight - 1;
 
             float sy = 0.5f;
-            for (int y = 0; y < destHeight; y++)
+            float sx;
+
+            for (int y = 0; y < lastdy; y++)
             {
-                float sx = 0.5f;
-                for (int x = 0; x < destWidth; x++)
+                sx = 0.5f;
+                for (int x = 0; x < lastdx; x++)
                 {
                     try
                     {
@@ -182,16 +194,45 @@ namespace PrimMesher
                     catch (IndexOutOfRangeException)
                     {
                     }
-
                     sx += xscale;
                 }
+                try
+                {
+                    c = srcImage.GetPixel(lastsx, (int)(sy));
+                    scaledImage.SetPixel(lastdx, y, Color.FromArgb(c.R, c.G, c.B));
+                }
+                catch (IndexOutOfRangeException)
+                {
+                }
+
                 sy += yscale;
             }
+
+            sx = 0.5f;
+            for (int x = 0; x < lastdx; x++)
+            {
+                try
+                {
+                    c = srcImage.GetPixel((int)(sx), lastsy);
+                    scaledImage.SetPixel(x, lastdy, Color.FromArgb(c.R, c.G, c.B));
+                }
+                catch (IndexOutOfRangeException)
+                {
+                }
+
+                sx += xscale;
+            }
+            try
+            {
+                c = srcImage.GetPixel(lastsx, lastsy);
+                scaledImage.SetPixel(lastdx, lastdy, Color.FromArgb(c.R, c.G, c.B));
+            }
+            catch (IndexOutOfRangeException)
+            {
+            }
+
             srcImage.Dispose();
             return scaledImage;
         }
-
     }
-
-    }
-#endif
+}
