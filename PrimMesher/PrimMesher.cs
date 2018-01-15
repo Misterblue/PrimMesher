@@ -1634,15 +1634,15 @@ namespace PrimMesher
             if (pathType == PathType.Circular)
             {
                 needEndFaces = false;
-                if (this.pathCutBegin != 0.0f || this.pathCutEnd != 1.0f)
+                if (this.pathCutBegin > float.Epsilon || this.pathCutEnd < 1.0f - float.Epsilon)
                     needEndFaces = true;
-                else if (this.taperX != 0.0f || this.taperY != 0.0f)
+                else if (this.taperX > 0.01f || this.taperY > 0.01f)
                     needEndFaces = true;
-                else if (this.skew != 0.0f)
+                else if (Math.Abs(this.skew) > 0.01f)
                     needEndFaces = true;
-                else if (twistTotal != 0.0f)
+                else if (Math.Abs(twistTotal) > 0.001f)
                     needEndFaces = true;
-                else if (this.radius != 0.0f)
+                else if (Math.Abs(this.radius) > 0.0005f)
                     needEndFaces = true;
             }
             else needEndFaces = true;
