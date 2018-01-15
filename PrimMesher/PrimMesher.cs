@@ -1830,8 +1830,11 @@ namespace PrimMesher
                     this.normals.AddRange(newLayer.vertexNormals);
                 }
 
-                if (node.percentOfPath < this.pathCutBegin + 0.01f || node.percentOfPath > this.pathCutEnd - 0.01f)
-                    this.faces.AddRange(newLayer.faces);
+                if (needEndFaces)
+                {
+                    if (nodeIndex == 0 || nodeIndex == path.pathNodes.Count - 1) 
+                        this.faces.AddRange(newLayer.faces);
+                }
 
                 // fill faces between layers
 
