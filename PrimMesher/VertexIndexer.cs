@@ -71,16 +71,43 @@ namespace PrimMesher
         {
         }
 
+        bool IsValidFace(ViewerFace vf)
+        {
+	        if (Math.Abs(vf.n1.X) + Math.Abs(vf.n1.Y) + Math.Abs(vf.n1.Z) < 0.2f)
+		        return false;
+	        if (Math.Abs(vf.n2.X) + Math.Abs(vf.n2.Y) + Math.Abs(vf.n2.Z) < 0.2f)
+		        return false;
+	        if (Math.Abs(vf.n3.X) + Math.Abs(vf.n3.Y) + Math.Abs(vf.n3.Z) < 0.2f)
+		        return false;
+
+	        return true;
+        }
 
         public VertexIndexer(PrimMesh primMesh)
         {
             int maxPrimFaceNumber = 0;
 
+            int[] validFaces = new int[9], invalidFaces = new int[9];
+            for (int i = 0; i < 9; i++)
+            {
+                validFaces[i] = -1;
+                invalidFaces[i] = 0;
+            }
+            int numValidFaces = 0;
+
             foreach (ViewerFace vf in primMesh.viewerFaces)
+            {
                 if (maxPrimFaceNumber < vf.primFaceNumber)
                     maxPrimFaceNumber = vf.primFaceNumber;
 
+                if (!IsValidFace(vf))
+                    invalidFaces[vf.primFaceNumber]++;
+            }
+
             this.numPrimFaces = maxPrimFaceNumber + 1;
+            for (int i = 0; i < this.numPrimFaces; i++)
+                if (invalidFaces[i] == 0)
+                    validFaces[i] = numValidFaces++;
 
             int[] numViewerVerts = new int[numPrimFaces];
             int[] numVertsPerPrimFace = new int[numPrimFaces];
@@ -111,13 +138,18 @@ namespace PrimMesher
                 viewerPolygons.Add(new List<ViewerPolygon>());
             }
 
+            this.numPrimFaces = numValidFaces;
+
             // populate the index lists
             foreach (ViewerFace vf in primMesh.viewerFaces)
             {
+                if (invalidFaces[vf.primFaceNumber] != 0)
+                    continue;
+
                 int v1, v2, v3;
                 
-                int[] vertIndices = viewerVertIndices[vf.primFaceNumber];
-                List<ViewerVertex> viewerVerts = viewerVertices[vf.primFaceNumber];
+                int[] vertIndices = viewerVertIndices[validFaces[vf.primFaceNumber]];
+                List<ViewerVertex> viewerVerts = viewerVertices[validFaces[vf.primFaceNumber]];
 
                 // add the vertices
                 if (vertIndices[vf.coordIndex1] < 0)
@@ -144,7 +176,8 @@ namespace PrimMesher
                 }
                 else v3 = vertIndices[vf.coordIndex3];
 
-                viewerPolygons[vf.primFaceNumber].Add(new ViewerPolygon(v1, v2, v3));
+                if (v1 != v2 && v1 != v3 && v2 != v3)
+                    viewerPolygons[validFaces[vf.primFaceNumber]].Add(new ViewerPolygon(v1, v2, v3));
             }
 
         }

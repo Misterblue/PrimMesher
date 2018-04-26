@@ -2,6 +2,10 @@
 
 This is my updated version of PrimMesher.
 
+Edit 20180426: Dahlia also [started a fork] of the original
+PrimMesher. Check out that fork at https://github.com/dahliaT/PrimMesher .
+As of this date, I have combined all forks into this one.
+
 When [SecondLife(r)] started, bandwidth to the home was limited so
 they invented the [primitive] or 'prim' as it became known.
 A [primitive] is a procedurally generated 3D mesh representation.
@@ -36,7 +40,7 @@ please add an issue.
 ## TODO (as of 20170704):
 
 - Incorporate the additional LOD sculpty levels from OpenSimulator:ubODEMeshing/ScupltMesh.cs;
-- Decide of code reorganizationin OpenSimulator:ubODEMeshing/SculptMesh.cs is significant or cosmetic;
+- Decide if code reorganizationin OpenSimulator:ubODEMeshing/SculptMesh.cs is significant or cosmetic;
 
 [SecondLife(r)]: https://secondlife.com/
 [OpenSimulator]: http://opensimulator.org/
@@ -46,3 +50,5 @@ please add an issue.
 [PrimMesher on GitHub]: https://github.com/lkalif/PrimMesher
 [Idealist Viewer demonstration]: https://vimeo.com/2123232
 [LookingGlass Viewer]: http://lookingglassviewer.org/
+[started a fork]: https://github.com/dahliaT/PrimMesher
+
