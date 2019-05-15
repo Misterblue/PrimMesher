@@ -3,7 +3,7 @@
 This is my updated version of PrimMesher.
 
 Edit 20190508: CinderBlocks keeps another version of PrimMesher as
-part of the [LibreMetaverse] verision of [libOpenMetaverse].
+part of the [LibreMetaverse] version of [libOpenMetaverse].
 I've looked through the changes and most (if not all) the modifications
 are stylistic (using 'var' over explicit type, etc). If anyone knows of
 functional changes, please [report an issue].
@@ -15,14 +15,14 @@ As of this date, I have combined all forks into this one.
 ### History
 
 When [SecondLife(r)] started, bandwidth to the home was limited so
-they invented the [primitive] or 'prim' as it became known.
+Linden Labs invented the [primitive] or 'prim' as it became known.
 A [primitive] is a procedurally generated 3D mesh representation.
 The [primitive] defines parameters (shape definition,
 extrusion path, cuts, and twists) that are converted into a
 3D mesh for display.
 
-PrimMesher is open-source code to convert a [SecondLife(r)]
-prim into a 3D mesh.
+PrimMesher is open-source code that converts one of these [SecondLife(r)]
+prims into a 3D mesh.
 
 The original PrimMesher was written by Dahlia Trimble and kept
 in the, now defunct, OpenSimulator Forge 
@@ -49,10 +49,11 @@ please [report an issue].
 
 And, any corrections to the above history are appreciated.
 
-## TODO (as of 20170704):
+## TODO (as of 20190515):
 
 - Incorporate the additional LOD sculpty levels from OpenSimulator:ubODEMeshing/ScupltMesh.cs;
-- Decide if code reorganizationin OpenSimulator:ubODEMeshing/SculptMesh.cs is significant or cosmetic;
+- Decide if code reorganization in OpenSimulator:ubODEMeshing/SculptMesh.cs is significant or cosmetic;
+- Review and encorporate any functional changes from the [LibreMetaverse] version;
 
 [LibreMetaverse]: https://bitbucket.org/cinderblocks/libremetaverse/src/master/
 [libOpenMetaverse]: https://github.com/openmetaversefoundation/libopenmetaverse
@@ -63,7 +64,6 @@ And, any corrections to the above history are appreciated.
 [sculpted prim]: http://wiki.secondlife.com/wiki/Sculpted_prim
 [passed away]: http://opensim-users.2152040.n2.nabble.com/Latif-Kalifa-td7582691.html
 [PrimMesher on GitHub]: https://github.com/lkalif/PrimMesher
-[Idealist Viewer demonstration]: https://vimeo.com/2123232
 [LookingGlass Viewer]: http://lookingglassviewer.org/
 [Radegast]: http://github.com/radegastdev/radegast.git
 [started a fork]: https://github.com/dahliaT/PrimMesher
